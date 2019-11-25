@@ -21,7 +21,7 @@
 		37D340B82370DDCB009B4568 /* AddExercisesGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D340B72370DDCB009B4568 /* AddExercisesGroupVC.swift */; };
 		37D340BB23725260009B4568 /* imageCacheExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D340BA23725260009B4568 /* imageCacheExtensions.swift */; };
 		A726D166C548C8BE7F174E0F /* Pods_FitnessGym.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30EDB75F1F99543CDB69F068 /* Pods_FitnessGym.framework */; };
-		F7896E7B238C3C7E0068F938 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7896E7A238C3C7E0068F938 /* ViewController.swift */; };
+		F7896E7E238C41160068F938 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7896E7D238C41160068F938 /* ViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +43,7 @@
 		37D340BA23725260009B4568 /* imageCacheExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imageCacheExtensions.swift; sourceTree = "<group>"; };
 		9BD4C0A4E92D22222A040922 /* Pods-FitnessGym.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitnessGym.release.xcconfig"; path = "Target Support Files/Pods-FitnessGym/Pods-FitnessGym.release.xcconfig"; sourceTree = "<group>"; };
 		EA3DA4397F85BA965E5061E7 /* Pods-FitnessGym.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitnessGym.debug.xcconfig"; path = "Target Support Files/Pods-FitnessGym/Pods-FitnessGym.debug.xcconfig"; sourceTree = "<group>"; };
-		F7896E7A238C3C7E0068F938 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = ../../../../../Documents/ViewController.swift; sourceTree = "<group>"; };
+		F7896E7D238C41160068F938 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +80,7 @@
 		37D34081236CD9DA009B4568 /* FitnessGym */ = {
 			isa = PBXGroup;
 			children = (
-				F7896E79238C3C460068F938 /* New Group */,
+				F7896E7C238C41000068F938 /* News */,
 				37D340B92372522F009B4568 /* helpers */,
 				37D340AE2370D744009B4568 /* DetailExercise */,
 				37D340A82370D6E9009B4568 /* Exercise */,
@@ -227,12 +227,12 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		F7896E79238C3C460068F938 /* New Group */ = {
+		F7896E7C238C41000068F938 /* News */ = {
 			isa = PBXGroup;
 			children = (
-				F7896E7A238C3C7E0068F938 /* ViewController.swift */,
+				F7896E7D238C41160068F938 /* ViewController.swift */,
 			);
-			path = "New Group";
+			path = News;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -362,7 +362,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7896E7B238C3C7E0068F938 /* ViewController.swift in Sources */,
+				F7896E7E238C41160068F938 /* ViewController.swift in Sources */,
 				37D340AD2370D733009B4568 /* ExerciseVC.swift in Sources */,
 				37D34083236CD9DA009B4568 /* AppDelegate.swift in Sources */,
 				37D340BB23725260009B4568 /* imageCacheExtensions.swift in Sources */,
