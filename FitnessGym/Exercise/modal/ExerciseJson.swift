@@ -19,11 +19,11 @@ class ExerciseJson {
     
     weak var delegate : ExerciseJsonDelegate?
     
-    func fetchExerciseData(exerciseGroup: ExerciseGroupModal, types: Int) {
+    func fetchExerciseData(id_group: Int, types: Int) {
         
         DispatchQueue.main.async {
         
-            AF.request(RequestURL.Exercise.rawValue + String(exerciseGroup.idGroup!)).responseJSON { (response) in
+            AF.request(RequestURL.Exercise.rawValue + String(id_group)).responseJSON { (response) in
                 
                 switch response.result {
                 case .success(let value):
@@ -39,7 +39,7 @@ class ExerciseJson {
                         
                         let exercise = ExerciseModal(id_exercise: id, name_exercise: name, image_url: imageURL, type: type, description: description , exerciseGroup_id: exerciseGroup_id)
                         self.delegate?.itemsDowloaded(exercises: exercise, type: types)
-                        self.delegate?.imageURL = exerciseGroup.imageURL
+                       // self.delegate?.imageURL = exercise.image_url
                         
                     }
                     
@@ -56,11 +56,11 @@ class ExerciseJson {
     }
     
     
-    func fetchExerciseFavoriteData(exerciseGroup: ExerciseGroupModal, types: Int, exercise_id: Int) {
+    func fetchExerciseFavoriteData(id_group: Int, types: Int, exercise_id: Int) {
            
            DispatchQueue.main.async {
            
-            AF.request(RequestURL.FaviriteExercise.rawValue + String(exerciseGroup.idGroup!) + "&exercise_id=" + String(exercise_id)).responseJSON { (response) in
+            AF.request(RequestURL.FaviriteExercise.rawValue + String(id_group) + "&exercise_id=" + String(exercise_id)).responseJSON { (response) in
                    
                    switch response.result {
                    case .success(let value):
@@ -76,7 +76,7 @@ class ExerciseJson {
                            
                            let exercise = ExerciseModal(id_exercise: id, name_exercise: name, image_url: imageURL, type: type, description: description , exerciseGroup_id: exerciseGroup_id)
                            self.delegate?.itemsDowloaded(exercises: exercise, type: types)
-                           self.delegate?.imageURL = exerciseGroup.imageURL
+                    //       self.delegate?.imageURL = exerciseGroup.imageURL
                            
                        }
                        

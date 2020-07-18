@@ -268,7 +268,7 @@ class StepsExerciseVC: UIViewController, UIScrollViewDelegate, StepsJsonDelegate
         let menuBtn = UIButton(type: .custom)
         menuBtn.frame = CGRect(x: 0.0, y: 0.0, width: 20, height: 20)
         if favorite {
-            menuBtn.setImage(UIImage(named:"icons8-star-100"), for: .normal)
+            menuBtn.setImage(UIImage(named:"icons8-star-100-2"), for: .normal)
         } else {
             menuBtn.setImage(UIImage(named:"star"), for: .normal)
         }

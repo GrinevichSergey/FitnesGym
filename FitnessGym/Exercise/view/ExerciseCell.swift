@@ -9,7 +9,7 @@
 import UIKit
 import AlamofireImage
 
-class ExerciseCell: UICollectionViewCell {
+class ExerciseCell: UITableViewCell {
     
     var exercise: ExerciseModal? {
         didSet {
@@ -18,8 +18,8 @@ class ExerciseCell: UICollectionViewCell {
     }
     override func prepareForReuse() {
         super.prepareForReuse()
-        //  self.imageURL.image = nil
-        // self.imageURL.af.cancelImageRequest()
+        //self.imageURL.image = nil
+        //self.imageURL.af.cancelImageRequest()
     }
     
     var nameLabel: UILabel = {
@@ -28,6 +28,7 @@ class ExerciseCell: UICollectionViewCell {
         label.textColor = .black
         label.font = UIFont(name: "Roboto-Regular", size: 17)
         label.numberOfLines = 0
+        label.textAlignment = .left
         label.lineBreakMode = NSLineBreakMode.byWordWrapping
         return label
         
@@ -62,18 +63,9 @@ class ExerciseCell: UICollectionViewCell {
         //        }
     }
     
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        
-        self.backgroundColor = #colorLiteral(red: 0.9607843137, green: 0.9607843137, blue: 0.9607843137, alpha: 1)
-        self.layer.cornerRadius = 10
-        self.layer.shadowColor = UIColor.lightGray.cgColor
-        self.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
-        self.layer.shadowRadius = 1.0
-        self.layer.shadowOpacity = 1.0
-        self.layer.masksToBounds = false
         
         let iconView: UIView = {
             let view = UIView()
@@ -96,13 +88,11 @@ class ExerciseCell: UICollectionViewCell {
         let arrowImage: UIImageView = {
             let image = UIImageView()
             image.translatesAutoresizingMaskIntoConstraints = false
-            image.image = #imageLiteral(resourceName: "chevron")
-            
+            image.image = #imageLiteral(resourceName: "forward1")
             image.contentMode = .scaleAspectFit
             return image
             
         }()
-        
         
         let stackView = UIStackView()
         stackView.axis = NSLayoutConstraint.Axis.horizontal
@@ -115,21 +105,38 @@ class ExerciseCell: UICollectionViewCell {
         
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.addSubview(stackView)
-        
-        stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        stackView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 5).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -5).isActive = true
+        contentView.addSubview(stackView)
+        stackView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         
         iconView.widthAnchor.constraint(equalToConstant: 60).isActive = true
         iconView.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
-        arrowImage.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        arrowImage.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        arrowImage.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        arrowImage.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
-        nameLabel.widthAnchor.constraint(equalToConstant: 245).isActive = true
+        nameLabel.leftAnchor.constraint(equalTo: iconView.rightAnchor, constant: 5).isActive = true
+ 
+        nameLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        self.backgroundColor =  #colorLiteral(red: 0.8784313725, green: 0.8784313725, blue: 0.8784313725, alpha: 1)
+       // contentView.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        contentView.layer.cornerRadius = 10
+        contentView.layer.shadowColor = UIColor.lightGray.cgColor
+        contentView.layer.shadowOffset = CGSize(width: 1.0, height: 1.0)
+        contentView.layer.shadowRadius = 1.0
+        contentView.layer.shadowOpacity = 1.0
+        contentView.layer.masksToBounds = false
+        
+        self.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 5, left: 10, bottom: 0, right: 10))
         
     }
     

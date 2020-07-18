@@ -14,6 +14,7 @@ struct ExerciseGroupModal: Hashable {
     let idGroup: Int?
     let nameGroup: String?
     let imageURL: String?
+    let exerciseCount: Int?
 
 }
 

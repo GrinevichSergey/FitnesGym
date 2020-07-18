@@ -9,7 +9,7 @@
 import Foundation
 
 enum RequestURL: String {
-   
+    
     case ExerciseGroup = "http://95.217.12.115/ExerciseGroup.php"
     case Exercise = "http://95.217.12.115/Exercise.php?exerciseGroup_id="
     case Steps = "http://95.217.12.115/steps.php?exercise_id="

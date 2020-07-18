@@ -29,7 +29,8 @@ class ExerciseGroupJson {
                         let id = item["id_group"].intValue
                         let name = item["name_group"].stringValue
                         let imageURL = item["image_url"].stringValue
-                        let exerciseGroup = ExerciseGroupModal(idGroup: id, nameGroup: name, imageURL: imageURL)
+                        let exerciseCount = item["exerciseCount"].intValue
+                        let exerciseGroup = ExerciseGroupModal(idGroup: id, nameGroup: name, imageURL: imageURL, exerciseCount: exerciseCount)
                         self.delegate?.itemsDowloaded(exerciseGroups: exerciseGroup)
                     }
                     
@@ -41,26 +42,27 @@ class ExerciseGroupJson {
     }
     
     func fetchFavoriteData(exercise_id: Int) {
-           
-           DispatchQueue.main.async {
+        
+        DispatchQueue.main.async {
             AF.request(RequestURL.Favorite.rawValue + String(exercise_id)).responseJSON { (response) in
-                   switch response.result {
-                   case .success(let value):
-                       let json = JSON(value)
-                       for item in json.arrayValue {
-                           let id = item["id_group"].intValue
-                           let name = item["name_group"].stringValue
-                           let imageURL = item["image_url"].stringValue
-                           let exerciseGroup = ExerciseGroupModal(idGroup: id, nameGroup: name, imageURL: imageURL)
-                           self.delegate?.itemsDowloaded(exerciseGroups: exerciseGroup)
-                       }
-                       
-                   case .failure(let error):
-                       print(error.localizedDescription)
-                   }
-               }
-           }
-       }
+                switch response.result {
+                case .success(let value):
+                    let json = JSON(value)
+                    for item in json.arrayValue {
+                        let id = item["id_group"].intValue
+                        let name = item["name_group"].stringValue
+                        let imageURL = item["image_url"].stringValue
+                        let exerciseCount = item["exerciseCount"].intValue
+                        let exerciseGroup = ExerciseGroupModal(idGroup: id, nameGroup: name, imageURL: imageURL, exerciseCount: exerciseCount)
+                        self.delegate?.itemsDowloaded(exerciseGroups: exerciseGroup)
+                    }
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
     
 }
 

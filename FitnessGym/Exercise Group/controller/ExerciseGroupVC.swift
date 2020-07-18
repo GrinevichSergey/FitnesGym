@@ -34,7 +34,6 @@ class ExercisesGroupVC: UITableViewController, ExerciseGroupDelegate {
         //        exerciseGroup.getItem(url: "http://95.217.12.115/ExerciseGroup.php")
         exerciseGroup.fetchExerciseGroupData()
         exerciseGroup.delegate = self
-        
 
     }
 //    
@@ -61,15 +60,21 @@ class ExercisesGroupVC: UITableViewController, ExerciseGroupDelegate {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 130
+        return 140
     }
-    
-    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ExerciseGroupCell
         
         cell.exerciseGroup = exerciseGroupItems[indexPath.row]
+        
+        if (indexPath.row % 2 == 0) {
+            cell.contentTextViewLeftConstraint?.isActive = true
+        } else {
+            cell.contentTextViewRightConstraint?.isActive = true
+        }
+
+        
         
         return cell
     }
@@ -77,16 +82,39 @@ class ExercisesGroupVC: UITableViewController, ExerciseGroupDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let exercise = ExerciseVC()
-        exercise.exercise.fetchExerciseData(exerciseGroup: exerciseGroupItems[indexPath.row], types: typeExercise)
-       
+        exercise.id_group = exerciseGroupItems[indexPath.row].idGroup!
+        exercise.typesGroup = typeExercise
+        exercise.imageURL = exerciseGroupItems[indexPath.row].imageURL
         self.navigationController?.pushViewController(exercise, animated: true)
+
+    }
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 60
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        let header = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50))
+        //segmentController
+        let items = ["Gym", "Home"]
+        let segmentControl = UISegmentedControl(items: items)
+        segmentControl.frame = CGRect(x: 40, y: 10, width: header.frame.width - 80, height: header.frame.height - 10)
+        segmentControl.selectedSegmentIndex = 0
+        segmentControl.addTarget(self, action: #selector(tapSegmentControl), for: .valueChanged)
+
+        segmentControl.layer.cornerRadius = segmentControl.bounds.height / 2
+        segmentControl.clipsToBounds = true
         
         
+        header.addSubview(segmentControl)
+        
+        return header
+     
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         //отступ ячеек
-        let verticalPadding: CGFloat = 5
+        let verticalPadding: CGFloat = 10
         
         let maskLayer = CALayer()
         
@@ -105,15 +133,12 @@ class ExercisesGroupVC: UITableViewController, ExerciseGroupDelegate {
         
         //
         
-        maskLayer.frame = CGRect(x: cell.bounds.origin.x, y: cell.bounds.origin.y, width: cell.bounds.width, height: cell.bounds.height).insetBy(dx: padding, dy: verticalPadding / 2)
+        maskLayer.frame = CGRect(x: cell.bounds.origin.x + 10, y: cell.bounds.origin.y, width: cell.bounds.width - 20, height: cell.bounds.height).insetBy(dx: padding, dy: verticalPadding / 2)
         cell.layer.mask = maskLayer
   
     }
     
-    
-    
-    
-    
+ 
     @objc func tapSegmentControl(segment: UISegmentedControl) -> Void {
         switch segment.selectedSegmentIndex {
         case 0:
@@ -137,14 +162,7 @@ extension ExercisesGroupVC {
         
         navigationItem.title = "Fitness Gym"
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Roboto-Bold", size: 15)!], for: .normal)
-               
-        //segmentController
-        let items = ["Gym", "Home"]
-        let segmentControl = UISegmentedControl(items: items)
-        segmentControl.selectedSegmentIndex = 0
-        segmentControl.addTarget(self, action: #selector(tapSegmentControl), for: .valueChanged)
-        tableView.tableHeaderView = segmentControl
-        
+         
         //обновление для таблицы
         refreshControl = UIRefreshControl()
         refreshControl?.attributedTitle = NSAttributedString(string: "Обновление")
@@ -155,7 +173,7 @@ extension ExercisesGroupVC {
         tableView.register(ExerciseGroupCell.self, forCellReuseIdentifier: cellId)
         tableView.tableFooterView = UIView(frame: .zero)
     
-        tableView.backgroundColor = #colorLiteral(red: 0.8784313725, green: 0.8784313725, blue: 0.8784313725, alpha: 1)
+        tableView.backgroundView = UIImageView(image: #imageLiteral(resourceName: "background"))
     }
     
     @objc func refresh() {

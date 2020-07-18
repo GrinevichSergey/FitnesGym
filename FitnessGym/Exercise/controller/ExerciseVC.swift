@@ -8,21 +8,25 @@
 
 import UIKit
 import AlamofireImage
+import SQLite
 
-
-
-class ExerciseVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, ExerciseJsonDelegate {
+class ExerciseVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ExerciseJsonDelegate {
     
     lazy var exercise = ExerciseJson()
-    fileprivate var exerciseItems = ExercisesModal()
+    var exerciseItems = ExercisesModal()
     fileprivate var cellID = "cellID"
-    fileprivate var headerID = "headerID"
-    fileprivate let padding :  CGFloat = 10
     weak var headerView: HeaderCell?
-    var exerciseCell: ExerciseCell?
     var imageURL: String?
-   // var starImage = true
+    var tableView = UITableView()
+    var id_group = Int()
+    var typesGroup = Int()
     
+    var database: Connection!
+    let favoriteTable = Table("Favorite")
+    let id_favorite = Expression<Int>("id_favorite")
+    let id_exercise = Expression<Int>("id_exercise")
+    
+    var favoriteItems = [Int]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,97 +34,79 @@ class ExerciseVC: UICollectionViewController, UICollectionViewDelegateFlowLayout
         settingsUI()
         exercise.delegate = self
         
+        database = LocalDatabase.shared.connection
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         print("ТУТ ПРИНИМАЕМ ДАННЫЕ А НЕ ЧЕРЕЗ ДРEГОЙ КОНТРОЛЛЕР")
-
-    }
-    
-    init() {
-        super.init(collectionViewLayout: StretchyHeaderLayout())
-     
-    }
- 
-    deinit {
-        headerView?.animator.stopAnimation(true)
-        print("Exercise deinit")
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        exerciseItems.removeAll()
+        tableView.reloadData()
+        exercise.fetchExerciseData(id_group: id_group, types: typesGroup)
+   
     }
     
     func itemsDowloaded(exercises: ExerciseModal, type: Int) {
-        
         if exercises.type == type || exercises.type == TypeExercise.homeAndGym.rawValue {
             exerciseItems.append(exercises)
-            
         }
-        
         DispatchQueue.main.async {
-            self.collectionView.reloadData()
+            self.tableView.reloadData()
         }
     }
     
     
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 160
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return exerciseItems.count
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! ExerciseCell
-        
-        //cell.backgroundColor = .black
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! ExerciseCell
+        if listFavorite(id: exerciseItems[indexPath.row].id_exercise) {
+            cell.contentView.backgroundColor = .orange
+        } else {
+            cell.contentView.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        }
         cell.exercise = exerciseItems[indexPath.row]
         
-//        if starImage {
-//            cell.starImage.isHidden = true
-//        } else {
-//            cell.starImage.isHidden = false
-//        }
-
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        //  return .init(width: view.frame.width, height: 70)
-        return .init(width: view.frame.width - 2 * padding, height: 70)
-    }
     
     
-    
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerID, for: indexPath) as? HeaderCell
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderCell.reuseIdentifier) as? HeaderCell
         
         if let imageUrl = imageURL, let url = URL(string: imageUrl)  {
-            headerView!.imageView.af.cancelImageRequest()
-            headerView!.imageView.af.setImage(withURL: url, cacheKey: imageUrl)
+            headerView!.imageExercise.af.cancelImageRequest()
+            headerView!.imageExercise.af.setImage(withURL: url, cacheKey: imageUrl)
         }
         
-        return headerView!
+        return headerView
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return .init(width: view.frame.width, height: 250)
-    }
+    //    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    //        let contentOffSetY = scrollView.contentOffset.y
+    //
+    //        if contentOffSetY > 0 {
+    //            headerView?.animator.fractionComplete = 0
+    //
+    //            return
+    //        }
+    //        headerView?.animator.fractionComplete = abs(contentOffSetY) / 100
+    //
+    //    }
     
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentOffSetY = scrollView.contentOffset.y
-        
-        if contentOffSetY > 0 {
-            headerView?.animator.fractionComplete = 0
-            
-            return
-        }
-        headerView?.animator.fractionComplete = abs(contentOffSetY) / 100
-        
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let stepsExerciseVC = StepsExerciseVC()
         
         stepsExerciseVC.exercise = exerciseItems[indexPath.row]
@@ -129,56 +115,114 @@ class ExerciseVC: UICollectionViewController, UICollectionViewDelegateFlowLayout
         navigationController?.pushViewController(stepsExerciseVC, animated: true)
     }
     
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        var rowAction = [UITableViewRowAction]()
+        let cell = tableView.cellForRow(at: indexPath)
+        
+        if !listFavorite(id: exerciseItems[indexPath.row].id_exercise) {
+            let favorite = UITableViewRowAction(style: .normal, title: "Favorite") { (action, index) in
+                if let id = self.exerciseItems[indexPath.row].id_exercise {
+                    self.insertFavorite(id: id)
+                }
+                cell?.contentView.backgroundColor = .orange
+            }
+            favorite.backgroundColor = .orange
+            rowAction.append(favorite)
+            
+        } else {
+            let delete = UITableViewRowAction(style: .normal, title: "Delete") { (action, index) in
+                if let id = self.exerciseItems[indexPath.row].id_exercise {
+                    self.deleteFavoriteItems(id: id)
+                }
+                cell?.contentView.backgroundColor = .white
+            }
+            delete.backgroundColor = .red
+            rowAction.append(delete)
+            
+        }
+        return rowAction
+    }
+    
+    
+    fileprivate func insertFavorite(id: Int) {
+        let insertFavorite = self.favoriteTable.insert(self.id_exercise <- id)
+        do {
+            try self.database.run(insertFavorite)
+            // tableView.reloadData()
+        } catch {
+            print(error)
+        }
+    }
+    
+    func deleteFavoriteItems(id: Int) {
+        let favorite = self.favoriteTable.filter(self.id_exercise == id)
+        let delete = favorite.delete()
+        do {
+            try self.database.run(delete)
+            //  tableView.reloadData()
+        } catch {
+            print(error)
+        }
+    }
+    
+    fileprivate func listFavorite(id: Int?) -> Bool {
+        var isFavorite = Bool()
+        do {
+            let favorites = try self.database.prepare(self.favoriteTable)
+            for favorite in favorites {
+                if id == favorite[self.id_exercise] {
+                    isFavorite = true
+                    break
+                } else {
+                    isFavorite = false
+                }
+            }
+        } catch {
+            print(error)
+        }
+        return isFavorite
+    }
+    
+    
 }
 
 
 //MARK: form settings
 extension ExerciseVC {
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    
-    fileprivate func settingsUI() {
-        
+//    override var preferredStatusBarStyle: UIStatusBarStyle {
+//        return .lightContent
+//    }
+//
+     func settingsUI() {
+        view.backgroundColor =  #colorLiteral(red: 0.8784313725, green: 0.8784313725, blue: 0.8784313725, alpha: 1)
         navigationItem.title = "Exercise"
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Roboto-Bold", size: 16)!], for: .normal)
-     //   navigationItem.rightBarButtonItem = self.editButtonItem
-        setupCollectionView()
-        setupCollectionViewLayout()
+//        navigationItem.rightBarButtonItem = self.editButtonItem
+        setupTableView()
     }
     
     
-    fileprivate func setupCollectionViewLayout() {
-        //layout customization
-        if let layout = collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.sectionInset = .init(top: padding, left: padding, bottom: padding, right: padding)
-            //отступ между ячейками
-             layout.minimumLineSpacing = 5
-        }
+    fileprivate func setupTableView() {
+        
+        view.addSubview(tableView)
+        tableView.backgroundColor =  #colorLiteral(red: 0.8784313725, green: 0.8784313725, blue: 0.8784313725, alpha: 1)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor).isActive = true
+        tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        tableView.register(ExerciseCell.self, forCellReuseIdentifier: cellID)
+        tableView.register(HeaderCell.self, forHeaderFooterViewReuseIdentifier: HeaderCell.reuseIdentifier)
+        tableView.tableFooterView = UIView(frame: .zero)
+        
     }
     
-    fileprivate func setupCollectionView() {
-        
-        self.collectionView!.register(ExerciseCell.self, forCellWithReuseIdentifier: cellID)
-        self.collectionView.register(HeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerID)
-        self.collectionView.backgroundColor = #colorLiteral(red: 0.8784313725, green: 0.8784313725, blue: 0.8784313725, alpha: 1)
-        
-        collectionView.contentInsetAdjustmentBehavior = .never
-        
-    }
-    
-//    override func setEditing(_ editing: Bool, animated: Bool) {
-//        super.setEditing(editing, animated: true)
-//
-//        if editing {
-//            starImage = false
-//            collectionView.reloadData()
-//        } else {
-//            starImage = true
-//            collectionView.reloadData()
-//        }
-   // }
     
 }
 

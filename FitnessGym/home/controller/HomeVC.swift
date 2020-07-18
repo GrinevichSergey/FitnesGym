@@ -74,7 +74,7 @@ extension HomeVC: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
             navigationController?.pushViewController(groupExercise, animated: true)
             
         } else if section == 1 {
-            let favoriteVC = FavoriteVC()
+            let favoriteVC = FavoriteGroupVC()
             navigationController?.pushViewController(favoriteVC, animated: true)
             
         } else if section == 2 {
