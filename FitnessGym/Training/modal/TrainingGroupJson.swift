@@ -32,6 +32,7 @@ class TrainingGroupJson {
                         let name = item["name_group"].stringValue
                         let imageURL = item["image_url"].stringValue
                         let exerciseCount = item["exerciseCount"].intValue
+                      
                         let exerciseGroup = ExerciseGroupModal(idGroup: id, nameGroup: name, imageURL: imageURL, exerciseCount: exerciseCount)
                         self.exerciseGroup.append(exerciseGroup)
                         

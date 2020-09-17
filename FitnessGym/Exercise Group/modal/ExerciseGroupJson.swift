@@ -12,6 +12,7 @@ import Alamofire
 
 protocol ExerciseGroupDelegate: class {
     func itemsDowloaded(exerciseGroups: ExerciseGroupModal)
+    var exerciseCount: Int? {get set}
 }
 
 class ExerciseGroupJson {
@@ -30,6 +31,7 @@ class ExerciseGroupJson {
                         let name = item["name_group"].stringValue
                         let imageURL = item["image_url"].stringValue
                         let exerciseCount = item["exerciseCount"].intValue
+         
                         let exerciseGroup = ExerciseGroupModal(idGroup: id, nameGroup: name, imageURL: imageURL, exerciseCount: exerciseCount)
                         self.delegate?.itemsDowloaded(exerciseGroups: exerciseGroup)
                     }
@@ -64,6 +66,32 @@ class ExerciseGroupJson {
         }
     }
     
+    func fetchExerciseCount(groupID: Int, type: Int, type1: Int) {
+        
+        DispatchQueue.main.async {
+            AF.request(RequestURL.ExerciseCount.rawValue).responseJSON { (response) in
+                
+                switch response.result {
+                case .success(let value):
+                    let json = JSON(value)
+                    for item in json.arrayValue {
+                        
+                        let exerciseCount = item["ExerciseCount"].intValue
+                        self.delegate?.exerciseCount = exerciseCount
+
+                    }
+                    
+                case .failure(let error): print(error.localizedDescription)
+                    
+                }
+                
+                
+            }
+        }
+  
+        
+    }
+
 }
 
 //MARK: //Codable parse

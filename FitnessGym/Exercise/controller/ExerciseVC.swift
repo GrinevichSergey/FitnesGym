@@ -11,7 +11,7 @@ import AlamofireImage
 import SQLite
 
 class ExerciseVC: UIViewController, UITableViewDataSource, UITableViewDelegate, ExerciseJsonDelegate {
-    
+  
     lazy var exercise = ExerciseJson()
     var exerciseItems = ExercisesModal()
     fileprivate var cellID = "cellID"

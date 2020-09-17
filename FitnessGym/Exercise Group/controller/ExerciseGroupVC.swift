@@ -11,14 +11,14 @@ import UIKit
 import SwiftyJSON
 
 enum TypeExercise: Int {
-    case homeAndGym  = 1
+    case homeAndGym  = 1 
     case gym         = 2
     case home        = 3
 }
 
 class ExercisesGroupVC: UITableViewController, ExerciseGroupDelegate {
- 
     
+    var exerciseCount: Int?
     let cellId = "cellId"
     lazy var exerciseGroup = ExerciseGroupJson()
     lazy var exerciseGroupItems = ExerciseGroupsModal()
@@ -30,25 +30,17 @@ class ExercisesGroupVC: UITableViewController, ExerciseGroupDelegate {
         super.viewDidLoad()
         
         setupInputComponents()
-        
-        //        exerciseGroup.getItem(url: "http://95.217.12.115/ExerciseGroup.php")
         exerciseGroup.fetchExerciseGroupData()
+        exerciseGroup.fetchExerciseCount(groupID: 1, type: 1, type1: 2)
         exerciseGroup.delegate = self
 
     }
-//    
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(true)
-//        exerciseGroupItems.removeAll()
-//    }
-   
+
 
     func itemsDowloaded(exerciseGroups: ExerciseGroupModal) {
         
         self.exerciseGroupItems.append(exerciseGroups)
         exerciseGroupItems.removeDuplicates()
-        //exerciseGroupItems = Array(Set(exerciseGroupItems))
-      
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -67,15 +59,13 @@ class ExercisesGroupVC: UITableViewController, ExerciseGroupDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ExerciseGroupCell
         
         cell.exerciseGroup = exerciseGroupItems[indexPath.row]
-        
+        cell.countExercise.text = "\(String(exerciseCount!)) exercise"
         if (indexPath.row % 2 == 0) {
             cell.contentTextViewLeftConstraint?.isActive = true
         } else {
             cell.contentTextViewRightConstraint?.isActive = true
         }
 
-        
-        
         return cell
     }
     
@@ -129,10 +119,7 @@ class ExercisesGroupVC: UITableViewController, ExerciseGroupDelegate {
         maskLayer.shadowRadius = 1.0
         maskLayer.shadowOpacity = 1.0
         maskLayer.masksToBounds = false
-        
-        
-        //
-        
+    
         maskLayer.frame = CGRect(x: cell.bounds.origin.x + 10, y: cell.bounds.origin.y, width: cell.bounds.width - 20, height: cell.bounds.height).insetBy(dx: padding, dy: verticalPadding / 2)
         cell.layer.mask = maskLayer
   
@@ -142,10 +129,12 @@ class ExercisesGroupVC: UITableViewController, ExerciseGroupDelegate {
     @objc func tapSegmentControl(segment: UISegmentedControl) -> Void {
         switch segment.selectedSegmentIndex {
         case 0:
-            print("segmentControll0")
+            print("gym")
+            print(exerciseGroupItems.count)
             typeExercise = TypeExercise.gym.rawValue
         case 1:
-            print("segmentControll1")
+            print("home")
+            print(exerciseGroupItems.count)
             typeExercise = TypeExercise.home.rawValue
         default:
             break

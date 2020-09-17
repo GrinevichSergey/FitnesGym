@@ -68,7 +68,7 @@ class ExerciseGroupCell: UITableViewCell {
         
         nameLabel.text = exerciseGroup.nameGroup
         
-        countExercise.text = "\(String(exerciseGroup.exerciseCount!)) exercise"
+   //     countExercise.text = "\(String(exerciseGroup.exerciseCount!)) exercise"
         
         if let imageUrl = exerciseGroup.imageURL, let url = URL(string: imageUrl)  {
             self.imageUrl.af.cancelImageRequest()

@@ -21,7 +21,7 @@ class LocalDatabase {
             let documentDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             let fileUrl = documentDirectory.appendingPathComponent("FitnessGym").appendingPathExtension("sqllite3")
             connection = try Connection(fileUrl.path)
-            
+              
 //            let dbPath = Bundle.main.path(forResource: "FitnessGym", ofType: "db")!
 //            connection = try Connection(dbPath)
 //            self.database = database
